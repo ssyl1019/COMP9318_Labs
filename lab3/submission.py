@@ -6,7 +6,7 @@ def hc(data, k):
     out = nn_chain(y, n)
     children = out[:, :2].astype(np.int, copy=False)
     return list(hc_cut(k, children,data.shape[0]))
-
+ 
 def hc_cut(n_clusters, children, n_leaves):
     nodes = [-(max(children[-1]) + 1)]
     for _ in range(n_clusters - 1):
@@ -17,7 +17,7 @@ def hc_cut(n_clusters, children, n_leaves):
     for i, node in enumerate(nodes):
         label[hc_get_descendent(-node, children, n_leaves)] = i
     return label
-
+ 
 def dis_similarity(data,p = 2):
     dis = []
     for i in range(data.shape[0]):
@@ -29,7 +29,7 @@ def dis_similarity(data,p = 2):
             tmp = tmp**(1/p)
             dis.append(tmp)
     return np.array(dis)
-
+ 
 def hc_get_descendent(node, children, n_leaves):
     ind = [node]
     if node < n_leaves:
@@ -45,7 +45,7 @@ def hc_get_descendent(node, children, n_leaves):
             ind.extend(children[i - n_leaves])
             n_indices += 1
     return descendent
-
+ 
 def condensed_index(n, i, j):
     if i < j:
         return n * i - (i * (i + 1) // 2) + (j - i - 1)
@@ -53,14 +53,14 @@ def condensed_index(n, i, j):
         return n * j - (j * (j + 1) // 2) + (i - j - 1)
     else:
         return 0
-
+ 
 class LinkageUnionFind():
-
+ 
     def __init__(self,n=0):
         self.parent = np.arange(2 * n - 1, dtype=np.intc)
         self.next_label = n
         self.size = np.ones(2 * n - 1, dtype=np.intc)
-
+ 
     def merge(self,x, y):
         self.parent[x] = self.next_label
         self.parent[y] = self.next_label
@@ -68,7 +68,7 @@ class LinkageUnionFind():
         self.size[self.next_label] = size
         self.next_label += 1
         return size
-
+ 
     def find(self,x):
         p = x
         while self.parent[x] != x:
@@ -76,7 +76,7 @@ class LinkageUnionFind():
         while self.parent[p] != x:
             p, self.parent[p] = self.parent[p], x
         return x
-
+ 
 def label(Z, n):
     uf = LinkageUnionFind(n)
     for i in range(n - 1):
@@ -87,18 +87,18 @@ def label(Z, n):
         else:
             Z[i, 0], Z[i, 1] = y_root, x_root
         Z[i, 3] = uf.merge(x_root, y_root)
-
+ 
 def nn_chain(dists, n):
     Z_arr = np.empty((n - 1, 4))
     Z = Z_arr
-
+ 
     D = dists.copy()  # Distances between clusters.
     size = np.ones(n, dtype=np.intc)  # Sizes of clusters.
-
+ 
     # Variables to store neighbors chain.
     cluster_chain = np.ndarray(n, dtype=np.intc)
     chain_length = 0
-
+ 
     for k in range(n - 1):
         if chain_length == 0:
             chain_length = 1
@@ -106,7 +106,7 @@ def nn_chain(dists, n):
                 if size[i] > 0:
                     cluster_chain[0] = i
                     break
-
+ 
         # Go through chain of neighbors until two mutual neighbors are found.
         while True:
             x = cluster_chain[chain_length - 1]
@@ -127,7 +127,7 @@ def nn_chain(dists, n):
                 break
             cluster_chain[chain_length] = y
             chain_length += 1
-
+ 
         # Merge clusters x and y and pop them from stack.
         chain_length -= 2
         # This is a convention used in fastcluster.
@@ -154,4 +154,5 @@ def nn_chain(dists, n):
     Z_arr = Z_arr[order]
     # Find correct cluster labels inplace.
     label(Z_arr, n)
+
     return Z_arr
