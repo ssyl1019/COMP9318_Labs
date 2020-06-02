@@ -1,13 +1,15 @@
+
+
 ## import modules here 
-
+ 
 ################# Question 0 #################
-
+ 
 def add(a, b): # do not change the heading of the function
     return a + b
-
-
+ 
+ 
 ################# Question 1 #################
-
+ 
 def nsqrt(x): # do not change the heading of the function
     #pass # **replace** this line with your code
     if(x<1):
@@ -26,17 +28,17 @@ def nsqrt(x): # do not change the heading of the function
     		else :
     			break
     	return mid
-
-
+ 
+ 
 ################# Question 2 #################
-
-
+ 
+ 
 # x_0: initial guess
 # EPSILON: stop when abs(x - x_new) < EPSILON
 # MAX_ITER: maximum number of iterations
-
+ 
 ## NOTE: you must use the default values of the above parameters, do not change them
-
+ 
 def find_root(f, fprime, x_0=1.0, EPSILON = 1E-7, MAX_ITER = 1000): # do not change the heading of the function
     # pass # **replace** this line with your code
     x_1 = x_0
@@ -48,10 +50,10 @@ def find_root(f, fprime, x_0=1.0, EPSILON = 1E-7, MAX_ITER = 1000): # do not cha
     	x_1 = x_0
     	# print(x_0,f(x_0))
     return x_0
-
-
+ 
+ 
 ################# Question 3 #################
-
+ 
 class Tree(object):
     def __init__(self, name='ROOT', children=None):
         self.name = name
@@ -64,16 +66,16 @@ class Tree(object):
     def add_child(self, node):
         assert isinstance(node, Tree)
         self.children.append(node)
-
+ 
 def make_tree(tokens): # do not change the heading of the function
     # pass # **replace** this line with your code    
     t = Tree(tokens[0])
     i = 2
     while i<len(tokens)-1:
     	j = 1
-    	if(tokens[i].isdigit() and tokens[i+1].isdigit()):
+    	if(tokens[i] not in "[]" and tokens[i+1] not in "[]"):
     		t.add_child(Tree(tokens[i]))
-    	elif(tokens[i].isdigit() and tokens[i+1]=="["):
+    	elif(tokens[i] not in "[]" and tokens[i+1]=="["):
     		j += 1
     		brkNum = 1
     		while brkNum :
@@ -83,11 +85,12 @@ def make_tree(tokens): # do not change the heading of the function
     				brkNum -= 1
     			j += 1
     		t.add_child(make_tree(tokens[i:i+j]))
-    	elif(tokens[i].isdigit() and tokens[i+1]=="]"):
+    	elif(tokens[i] not in "[]" and tokens[i+1]=="]"):
     		t.add_child(Tree(tokens[i]))
+    		j +=1
     	i += j
     return t
-
+ 
 def max_depth(root): # do not change the heading of the function
     # pass # **replace** this line with your code
     if(root.children == []):
@@ -98,4 +101,5 @@ def max_depth(root): # do not change the heading of the function
     		currD = max_depth(child)
     		if(currD>maxD):
     			maxD = currD
+
     	return maxD + 1
